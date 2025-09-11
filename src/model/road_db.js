@@ -1,4 +1,4 @@
-// src/models/roadDB.js
+// src/models/road_db.js
 const pool = require('../../config/mysql');
 const bcrypt = require('bcrypt');
 
@@ -26,7 +26,28 @@ const getAllUsers = async () => {
 // Criar usuário simples (sem senha)
 const createSimpleUser = async (user) => {
   const { name, email } = user;
-  await pool.query("INSERT INTO users (name, email) VALUES (?, ?)", [name, email]);
+  await pool.query('INSERT INTO users (name, email) VALUES (?, ?)', [name, email]);
 };
 
-module.exports = { createUser, findUserByEmail, getAllUsers, createSimpleUser };
+// 🔑 Autenticar usuário (email + senha)
+const authenticateUser = async (email, password) => {
+  const user = await findUserByEmail(email);
+  if (!user) {
+    return null; // usuário não encontrado
+  }
+
+  const validPassword = await bcrypt.compare(password, user.password);
+  if (!validPassword) {
+    return null; // senha incorreta
+  }
+
+  return user; // sucesso → retorna os dados do usuário
+};
+
+module.exports = { 
+  createUser, 
+  findUserByEmail, 
+  getAllUsers, 
+  createSimpleUser, 
+  authenticateUser 
+};
