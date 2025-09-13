@@ -2,10 +2,16 @@ const express = require('express');
 const router = express.Router();
 const userController = require('../controllers/userController');
 const { uploadImage } = require('../controllers/exampleController');
+const authMiddleware = require('../middleware/auth');
 
 // Usuários MySQL
+router.get('/users', authMiddleware, userController.getUsers); // protegido
 router.get('/users', userController.getUsers);
 router.post('/users', userController.createUser);
+
+// Login e Logout
+router.post('/auth/login', userController.loginUser);
+router.post('/auth/logout', authMiddleware, userController.logoutUser);
 
 // Registro Mongo
 router.post('/auth/register', userController.registerUser);
