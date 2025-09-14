@@ -1,6 +1,7 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const redis = require('../config/redis');
+const { emailQueue } = require('../queues');
 const { createUser, findUserByEmail, getAllUsers } = require('../models/road_db');
 
 // Controller de usuários
