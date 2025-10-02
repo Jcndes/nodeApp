@@ -1,7 +1,7 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const redis = require('../config/redis');
-const { emailQueue } = require('../queues');
+const { emailQueue } = require('../queues'); // fila de e-mails
 const { createUser, findUserByEmail, getAllUsers } = require('../models/road_db');
 
 // Controller de usuários
@@ -50,7 +50,19 @@ module.exports = {
 
       const user = await createUser(name, email, passwordHash);
 
-      res.status(201).json({ msg: 'Usuário criado com sucesso!', user });
+      // Adiciona job para enviar e-mail de boas-vindas
+      await emailQueue.add('send-welcome-email', {
+        userId: user.insertId || user.id, // ajuste conforme o retorno do MySQL
+        name,
+        email,
+      }, {
+        attempts: 3,
+        backoff: { type: 'exponential', delay: 5000 },
+        removeOnComplete: true,
+        removeOnFail: false,
+      });
+
+      return res.status(201).json({ msg: 'Usuário criado com sucesso! E-mail de boas-vindas será enviado.', user });
     } catch (err) {
       res.status(500).json({ msg: 'Erro no servidor', error: err.message });
     }
@@ -103,3 +115,4 @@ module.exports = {
     }
   }
 };
+
