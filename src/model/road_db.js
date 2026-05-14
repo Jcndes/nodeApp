@@ -44,10 +44,20 @@ const authenticateUser = async (email, password) => {
   return user; // sucesso → retorna os dados do usuário
 };
 
-module.exports = { 
-  createUser, 
-  findUserByEmail, 
-  getAllUsers, 
-  createSimpleUser, 
-  authenticateUser 
+// Atualizar senha do usuário pelo email
+const updateUserPassword = async (email, password) => {
+  const [result] = await pool.query(
+    'UPDATE users SET password = ? WHERE email = ?',
+    [password, email]
+  );
+  return result;
+};
+
+module.exports = {
+  createUser,
+  findUserByEmail,
+  getAllUsers,
+  createSimpleUser,
+  authenticateUser,
+  updateUserPassword,
 };

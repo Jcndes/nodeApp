@@ -2,7 +2,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Lemon&display=swap');
 
 :root {
-    --laranja-claro: #FF862A;
+    --laranja-claro: #5283c8;
     --alto-contraste-fundo: #000000;
     --alto-contraste-texto: #ffffff;
     --alto-contraste-link: #ffd700;
@@ -129,12 +129,101 @@ h2 {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     /* Sombra suave para destacar o formulário */
     font-weight: bold;
+    display: grid;
+    gap: 1.5rem;
+}
+
+.formulario form {
+    display: grid;
+    gap: 0.75rem;
+    padding: 1rem;
+    border: 1px solid #E4E0DD;
+    border-radius: 12px;
+    background: #faf7f4;
+}
+
+.formulario h3 {
+    margin: 0;
+    color: #3da433;
+    font-size: 1.1rem;
+}
+
+.formulario label {
+    font-size: 0.95rem;
+}
+
+.formulario input {
+    padding: 0.8rem 1rem;
+    border: 1px solid #CBC2BD;
+    border-radius: 8px;
+    font-size: 1rem;
+}
+
+.formulario small {
+    color: #666666;
+    font-size: 0.85rem;
 }
 
 .formulario button {
-    background-color: #CB6D43;
+    background-color: #5776cd;
     border: none;
+    color: white;
     font-weight: bold;
+    padding: 0.9rem 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.menu-button {
+    background: transparent;
+    border: 1px solid #55b83e;
+    color: #3683c6;
+    padding: 0.4rem 0.8rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.hidden-section {
+    display: none;
+}
+
+.form-message {
+    font-size: 0.95rem;
+    margin: 0;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.recuperacao-menu {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.recuperacao-menu button {
+    background: #16ba21;
+    color: white;
+    border: none;
+    padding: 0.8rem 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.recuperacao-menu button:hover {
+    background: #4aa92d;
+}
+
+#recuperacao-forms {
+    display: grid;
+}
+
+#recuperacao-forms form {
+    max-width: 420px;
 }
 
 .form-control {

@@ -9,9 +9,13 @@ router.get('/users', authMiddleware, userController.getUsers); // protegido
 router.get('/users', userController.getUsers);
 router.post('/users', userController.createUser);
 
-// Login e Logout
+// Login, validação e recuperação
 router.post('/auth/login', userController.loginUser);
 router.post('/auth/logout', authMiddleware, userController.logoutUser);
+router.post('/auth/validate-email', userController.validateEmail);
+router.post('/auth/validate-password', userController.validatePassword);
+router.post('/auth/recover-password', userController.recoverPassword);
+router.post('/auth/reset-password', userController.resetPassword);
 
 // Registro Mongo
 router.post('/auth/register', userController.registerUser);

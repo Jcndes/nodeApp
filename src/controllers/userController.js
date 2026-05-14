@@ -1,8 +1,9 @@
 const bcrypt = require('bcrypt');
+const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
 const redis = require('../config/redis');
 const { emailQueue } = require('../queues'); // fila de e-mails
-const { createUser, findUserByEmail, getAllUsers } = require('../models/road_db');
+const { createUser, findUserByEmail, getAllUsers, updateUserPassword } = require('../models/road_db');
 
 // Controller de usuários
 module.exports = {
@@ -65,6 +66,106 @@ module.exports = {
       return res.status(201).json({ msg: 'Usuário criado com sucesso! E-mail de boas-vindas será enviado.', user });
     } catch (err) {
       res.status(500).json({ msg: 'Erro no servidor', error: err.message });
+    }
+  },
+
+  // Validar se o email existe
+  async validateEmail(req, res) {
+    try {
+      const { email } = req.body;
+      if (!email) {
+        return res.status(422).json({ msg: 'Email é obrigatório.' });
+      }
+
+      const user = await findUserByEmail(email);
+      if (!user) {
+        return res.status(404).json({ exists: false, msg: 'Email não encontrado.' });
+      }
+
+      return res.json({ exists: true, msg: 'Email válido.' });
+    } catch (err) {
+      res.status(500).json({ msg: 'Erro ao validar email', error: err.message });
+    }
+  },
+
+  // Validar senha do usuário sem gerar token
+  async validatePassword(req, res) {
+    try {
+      const { email, password } = req.body;
+      if (!email || !password) {
+        return res.status(422).json({ msg: 'Email e senha são obrigatórios.' });
+      }
+
+      const user = await findUserByEmail(email);
+      if (!user) {
+        return res.status(404).json({ valid: false, msg: 'Usuário não encontrado.' });
+      }
+
+      const isMatch = await bcrypt.compare(password, user.password);
+      if (!isMatch) {
+        return res.status(401).json({ valid: false, msg: 'Senha inválida.' });
+      }
+
+      return res.json({ valid: true, msg: 'Senha válida.' });
+    } catch (err) {
+      res.status(500).json({ msg: 'Erro ao validar senha', error: err.message });
+    }
+  },
+
+  // Iniciar recuperação de senha
+  async recoverPassword(req, res) {
+    try {
+      const { email } = req.body;
+      if (!email) {
+        return res.status(422).json({ msg: 'Email é obrigatório.' });
+      }
+
+      const user = await findUserByEmail(email);
+      if (!user) {
+        return res.status(404).json({ msg: 'Usuário não encontrado.' });
+      }
+
+      const token = crypto.randomBytes(32).toString('hex');
+      await redis.set(`passwordRecovery:${token}`, email, { EX: 900 });
+
+      return res.json({
+        msg: 'Token de recuperação gerado. Use-o para redefinir a senha.',
+        token,
+      });
+    } catch (err) {
+      res.status(500).json({ msg: 'Erro ao iniciar recuperação de senha', error: err.message });
+    }
+  },
+
+  // Redefinir senha usando token de recuperação
+  async resetPassword(req, res) {
+    try {
+      const { token, password, confirmpassword } = req.body;
+      if (!token || !password || !confirmpassword) {
+        return res.status(422).json({ msg: 'Token, senha e confirmação são obrigatórios.' });
+      }
+      if (password !== confirmpassword) {
+        return res.status(422).json({ msg: 'As senhas não conferem.' });
+      }
+
+      const email = await redis.get(`passwordRecovery:${token}`);
+      if (!email) {
+        return res.status(404).json({ msg: 'Token de recuperação inválido ou expirado.' });
+      }
+
+      const user = await findUserByEmail(email);
+      if (!user) {
+        return res.status(404).json({ msg: 'Usuário não encontrado.' });
+      }
+
+      const salt = await bcrypt.genSalt(12);
+      const passwordHash = await bcrypt.hash(password, salt);
+      await updateUserPassword(email, passwordHash);
+      await redis.del(`passwordRecovery:${token}`);
+
+      return res.json({ msg: 'Senha redefinida com sucesso.' });
+    } catch (err) {
+      res.status(500).json({ msg: 'Erro ao redefinir senha', error: err.message });
     }
   },
 

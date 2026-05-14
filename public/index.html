@@ -6,7 +6,8 @@
     <meta name="description" content="Página inicial exemplo em HTML.">
     <meta name="author" content="Developer José Carlos Martins">
     <title>Portifolio</title>
-    <link rel="stylesheet" href="style.css"> <!-- CSS externo opcional -->
+    <link rel="stylesheet" href="img/styles.css">
+    <script defer src="img/script.js"></script>
 </head>
 <body>
     <header>
@@ -16,6 +17,8 @@
                 <li><a href="#inicio">Início</a></li>
                 <li><a href="#sobre">Sobre</a></li>
                 <li><a href="#contato">Contato</a></li>
+                <li><a href="#about">about</a></li>
+                <li><button id="show-recover-menu" class="menu-button" type="button">Recuperação</button></li>
                 <div class="spinner-border text-warning" role="status">
                   <span class="visually-hidden">Loading...</span>
                 </div>
@@ -71,6 +74,62 @@
         <section id="contato">
             <h2>Contato</h2>
             <p>Email: exemplo@dominio.com</p>
+        </section>
+
+        <section id="recuperacao">
+            <h2>Recuperação e Validação</h2>
+            <div class="recuperacao-menu">
+                <button type="button" data-target="validate-email-form">Validar email</button>
+                <button type="button" data-target="validate-password-form">Validar senha</button>
+                <button type="button" data-target="recover-password-form">Recuperar senha</button>
+                <button type="button" data-target="reset-password-form">Redefinir senha</button>
+            </div>
+            <div id="recuperacao-forms" class="formulario hidden">
+                <form id="validate-email-form" class="hidden">
+                    <h3>Validar Email</h3>
+                    <label for="email-validation">Email</label>
+                    <input id="email-validation" type="email" placeholder="email@dominio.com" required>
+                    <button type="submit">Validar Email</button>
+                    <p class="form-message" id="validate-email-message"></p>
+                </form>
+
+                <form id="validate-password-form" class="hidden">
+                    <h3>Validar Senha</h3>
+                    <label for="email-password-validation">Email</label>
+                    <input id="email-password-validation" type="email" placeholder="email@dominio.com" required>
+                    <label for="password-validation">Senha</label>
+                    <input id="password-validation" type="password" placeholder="Senha com at&eacute; 10 caracteres" required>
+                    <small>Regras: até 10 caracteres, 1 maiúscula, 1 número e 1 caractere especial.</small>
+                    <button type="submit">Validar Senha</button>
+                    <p class="form-message" id="validate-password-message"></p>
+                </form>
+
+                <form id="recover-password-form" class="hidden">
+                    <h3>Recuperar Senha</h3>
+                    <label for="recover-email">Email</label>
+                    <input id="recover-email" type="email" placeholder="email@dominio.com" required>
+                    <button type="submit">Gerar Token</button>
+                    <p class="form-message" id="recover-password-message"></p>
+                </form>
+
+                <form id="reset-password-form" class="hidden">
+                    <h3>Redefinir Senha</h3>
+                    <label for="reset-token">Token de Recuperação</label>
+                    <input id="reset-token" type="text" placeholder="Token recebido" required>
+                    <label for="reset-password">Nova Senha</label>
+                    <input id="reset-password" type="password" placeholder="Nova senha" required>
+                    <label for="reset-password-confirm">Confirmar Senha</label>
+                    <input id="reset-password-confirm" type="password" placeholder="Confirme a senha" required>
+                    <small>Regras: até 10 caracteres, 1 maiúscula, 1 número e 1 caractere especial.</small>
+                    <button type="submit">Redefinir Senha</button>
+                    <p class="form-message" id="reset-password-message"></p>
+                </form>
+            </div>
+        </section>
+
+         <section id="about">
+            <h2>about</h2>
+            <p>Sistema em desenvolvimento.</p>
         </section>
     </main>
 
